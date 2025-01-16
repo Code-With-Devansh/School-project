@@ -147,7 +147,6 @@ class Bot:
         print('screenshot')
         time.sleep(0.7)
         initcol = ImageGrab.grab()
-        initcol.save('screenshots/1.jpg')
         initcol = initcol.getpixel((547, 38))
 
         time.sleep(1)
