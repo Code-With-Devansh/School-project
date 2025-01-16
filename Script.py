@@ -126,7 +126,7 @@ class Bot:
         self.dictstr = json.loads(str)
     def Playnews(self):
         results = len(self.dictstr['articles'])
-        if self.newsIndex<results:
+        while self.newsIndex<results:
             Bot.speakGirl("starting the news...")
             art = self.dictstr['articles']
             Bot.speakGirl(art[self.newsIndex]['title'])
@@ -144,15 +144,19 @@ class Bot:
         return text
     def readScreen(self):
         pyautogui.hotkey('win', 'shift', 's')
+        print('screenshot')
         time.sleep(0.7)
         initcol = ImageGrab.grab()
-        initcol = initcol.getpixel((275, 747))
+        initcol.save('screenshots/1.jpg')
+        initcol = initcol.getpixel((547, 38))
+
         time.sleep(1)
         while True:
             time.sleep(0.5)
             img = ImageGrab.grab()
-            if img.getpixel((275, 747)) != initcol:
+            if img.getpixel((547, 38)) != initcol:
                 break
+        
         time.sleep(0.5)
         Initialimg = ImageGrab.grab().getpixel((1133, 643))
         while True:
@@ -179,8 +183,6 @@ class Bot:
                 print('fetching current news...')
                 self.getNews()
                 self.Playnews()
-                    
-                    
             elif "what is" in query:
                 definitions: dict[str:str] = self.getdefinitions(query.replace("what is", ''))
                 for i in definitions:
@@ -220,27 +222,9 @@ class Bot:
                 chromePath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
                 webbrowser.register('chrome',None,webbrowser.BackgroundBrowser(chromePath))
                 webbrowser.get('chrome').open_new_tab(urL)
-            elif "search" in query:
-                link = "https://www.google.com/search?q=<SEARCH>"
-                urL = link.replace("<SEARCH>", query.replace('search', ""))
-                chromePath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-                webbrowser.register('chrome',None,webbrowser.BackgroundBrowser(chromePath))
-                webbrowser.get('chrome').open_new_tab(urL)
-            elif "play music" in query:
-                music_thread = threading.Thread(target=self.playMusic, daemon=True)
-                music_thread.start()
-                self.listen_for_ctrl_c()
-                music_thread
 
-            elif "play song" in query:
-                path = "songs"
-                music = os.listdir(path)
-                musicFiles = Bot.getFiles(music)
-                musicPath = os.path.join(path,musicFiles[random.randint(len(musicFiles))])
-                self.player = vlc.MediaPlayer(musicPath)
-                self.player.play()
-                self.playMusic(musicPath) 
             elif 'read this article' in query:
+                time.sleep(5)
                 self.readScreen()
             elif "search on youtube" in query:
                 urL = "https://www.youtube.com/results?search_query=<search>"
@@ -248,6 +232,18 @@ class Bot:
                 chromePath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
                 webbrowser.register('chrome',None,webbrowser.BackgroundBrowser(chromePath))
                 webbrowser.get('chrome').open_new_tab(link)
+            elif "search" in query:
+                link = "https://www.google.com/search?q=<SEARCH>"
+                urL = link.replace("<SEARCH>", query.replace('search', ""))
+                chromePath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+                webbrowser.register('chrome',None,webbrowser.BackgroundBrowser(chromePath))
+                webbrowser.get('chrome').open_new_tab(urL)
+            elif "play music" in query:
+                print(query)
+                music_thread = threading.Thread(target=self.playMusic, daemon=True)
+                music_thread.start()
+                self.listen_for_ctrl_c()
+                music_thread
             else:
                 link = "https://www.google.com/search?q=<SEARCH>"
                 urL = link.replace("<SEARCH>", query)
